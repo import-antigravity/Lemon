@@ -144,7 +144,7 @@ class Midi(object):
         return self.__subdivisions_per_beat
 
 
-def matrix_to_midi(matrix, subdivisions_per_beat, bpm=120, low_c=48):
+def matrix_to_midi(matrix, subdivisions_per_beat, bpm=120, low_c=60, hold_notes=False):
     midi = mido.MidiFile()
     track = mido.MidiTrack()
     midi.tracks.append(track)
@@ -159,28 +159,25 @@ def matrix_to_midi(matrix, subdivisions_per_beat, bpm=120, low_c=48):
         mido.bpm2tempo(bpm)
     ))
 
-    current_delta = 0
-
     for subdivision in range(matrix.shape[1]):
-        was_note = False
-        if subdivision > 0:
+        current_delta = subdiv_delta
+        try:
             for note in range(matrix.shape[0]):
-                if matrix[note, subdivision - 1]:
-                    track.append(mido.Message('note_off', note=note + low_c, velocity=80, time=current_delta + subdiv_delta))
-                    was_note = True
+                off = matrix[note, subdivision - 1] and not matrix[note, subdivision] if hold_notes \
+                    else matrix[note, subdivision - 1]
+                on = matrix[note, subdivision] and not matrix[note, subdivision - 1] if hold_notes \
+                    else matrix[note, subdivision]
+
+                if off:
+                    track.append(mido.Message('note_off', note=note + low_c, velocity=80, time=current_delta))
                     current_delta = 0
-
-        for note in range(matrix.shape[0]):
-            if matrix[note, subdivision]:
-                track.append(mido.Message('note_on', note=note + low_c, velocity=80, time=current_delta))
-                was_note = True
-                current_delta = 0
-
-        if was_note:
-            current_delta = 0
-        else:
-            current_delta += subdiv_delta
-
+                if on:
+                    track.append(mido.Message('note_on', note=note + low_c, velocity=80, time=current_delta))
+                    current_delta = 0
+        except IndexError:
+            for note in range(matrix.shape[0]):
+                if matrix[note, subdivision]:
+                    track.append(mido.Message('note_on', note=note + low_c, velocity=80, time=0))
     return midi
 
 
