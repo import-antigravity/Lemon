@@ -10,6 +10,7 @@ data = pd.read_csv('chorales.csv', names=[
 songs = data.name.unique()
 
 vectors = []
+matrices = []
 
 for i, song_name in enumerate(songs):
     this_song = data.loc[data['name'] == song_name][['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']]
@@ -17,11 +18,18 @@ for i, song_name in enumerate(songs):
 
     tps = midivectors.chromatic_transpositions(song)
     for tp in tps:
-        parts = midivectors.length_conform(tp)
+        parts = midivectors.length_conform(tp, subdivisions=32)
         for part in parts:
             vec = midivectors.matrix_to_stacked_vector(part)
             vectors.append(vec)
+            matrices.append(part)
 
-new_data = np.vstack(vectors)
+vector_data = np.vstack(vectors)
+matrix_data = np.dstack(matrices)
 
-np.save('chorales_vectors_12.npy', new_data)
+# save stacked vectors
+np.save('data/chorales_vectors_12.npy', vector_data)
+
+# save matrices
+np.save('data/chorales_matrices_12_32.npy', matrix_data)
+
