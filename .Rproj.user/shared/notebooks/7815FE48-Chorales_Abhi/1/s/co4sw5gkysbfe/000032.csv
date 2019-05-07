@@ -1,0 +1,6 @@
+"0","cond_num <- chorales_svd$d[1] / chorales_svd$d[length(chorales_svd$d)]"
+"0","cond_num"
+"1","[1]"
+"1"," 75.33333"
+"1","
+"
