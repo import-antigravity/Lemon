@@ -1,7 +1,9 @@
 from collections import namedtuple
+from time import sleep
 
 import mido
 import numpy as np
+from pygame import mixer
 
 
 class Midi(object):
@@ -139,6 +141,15 @@ class Midi(object):
         return note_matrix
     '''
 
+    def play_midi(self, file_name, sleep_time=10):
+        midi_file = self.to_midi()
+        midi_file.save(file_name)
+
+        mixer.init()
+        mixer.music.load(file_name)
+        mixer.music.play()
+        sleep(sleep_time)
+
     @property
     def subdivisions_per_beat(self):
         return self.__subdivisions_per_beat
@@ -202,3 +213,8 @@ def chromatic_transpositions(matrix):
 
 def matrix_to_stacked_vector(matrix):
     return np.ravel(matrix.T)
+
+
+def stacked_vector_to_matrix(matrix, octaves=2):
+    note_range = 12 * octaves
+    return np.reshape(matrix, (-1, note_range)).T
