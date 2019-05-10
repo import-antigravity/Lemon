@@ -1,6 +1,0 @@
-"0","chorales_svd <- svd(chorales)"
-"0","sing_vals <- data.frame(sing_vals = signif(chorales_svd$d, digits = 3))"
-"0",""
-"0","ggplot(sing_vals, aes(x = 1:length(sing_vals), y = log10(sing_vals))) + "
-"0","  geom_point() +"
-"0","  ylab(""Log10 Singular Values"") + xlab(""Index"")"

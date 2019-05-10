@@ -18,7 +18,7 @@ for i, song_name in enumerate(songs):
 
     tps = midivectors.chromatic_transpositions(song)
     for tp in tps:
-        parts = midivectors.length_conform(tp, subdivisions=32)
+        parts = midivectors.length_conform(tp, subdivisions=8)
         for part in parts:
             vec = midivectors.matrix_to_stacked_vector(part)
             vectors.append(vec)
@@ -28,8 +28,8 @@ vector_data = np.vstack(vectors)
 matrix_data = np.dstack(matrices)
 
 # save stacked vectors
-np.save('data/chorales_vectors_12.npy', vector_data)
+np.save('data/chorales_vectors_12_8.npy', vector_data)
 
 # save matrices
-np.save('data/chorales_matrices_12_32.npy', matrix_data)
+np.save('data/chorales_matrices_12_8.npy', matrix_data)
 
